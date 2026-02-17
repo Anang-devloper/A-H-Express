@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>A & H Express — Pengiriman Paket Cepat & Aman</title>
+  <meta name="description" content="A & H Express — layanan pengiriman paket cepat, aman, dan terpercaya. Kirim paket mudah langsung via WhatsApp." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+    body { background:#f4f6f9; color:#222; }
+
+    header {
+      background: linear-gradient(135deg,#0f172a,#1e293b);
+      color:white;
+      padding:20px 0;
+      text-align:center;
+    }
+
+    header h1 {
+      font-size:28px;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+
+    header p {
+      opacity:.8;
+      margin-top:5px;
+    }
+
+    .container {
+      max-width:700px;
+      margin:40px auto;
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      box-shadow:0 10px 30px rgba(0,0,0,.08);
+    }
+
+    h2 {
+      text-align:center;
+      margin-bottom:20px;
+      color:#0f172a;
+    }
+
+    .form-group {
+      margin-bottom:15px;
+    }
+
+    label {
+      font-size:14px;
+      font-weight:600;
+      display:block;
+      margin-bottom:5px;
+    }
+
+    input, textarea {
+      width:100%;
+      padding:10px;
+      border:1px solid #ddd;
+      border-radius:8px;
+      font-size:14px;
+    }
+
+    textarea { resize:none; }
+
+    button {
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:8px;
+      background:#16a34a;
+      color:white;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.3s;
+    }
+
+    button:hover {
+      background:#15803d;
+    }
+
+    footer {
+      text-align:center;
+      padding:20px;
+      margin-top:40px;
+      font-size:14px;
+      color:#666;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>A & H Express</h1>
+  <p>Pengiriman Paket Cepat • Aman • Terpercaya</p>
+</header>
+
+<div class="container">
+  <h2>Form Pengiriman Paket</h2>
+
+  <form id="orderForm">
+
+    <div class="form-group">
+      <label>Nama Seller / Pengirim</label>
+      <input type="text" id="sellerName" required>
+    </div>
+
+    <div class="form-group">
+      <label>No. Telepon Pengirim</label>
+      <input type="tel" id="sellerPhone" required>
+    </div>
+
+    <div class="form-group">
+      <label>Alamat Rumah Pengirim</label>
+      <textarea id="sellerAddress" rows="3" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Nama Penerima</label>
+      <input type="text" id="receiverName" required>
+    </div>
+
+    <div class="form-group">
+      <label>No. Telepon Penerima</label>
+      <input type="tel" id="receiverPhone" required>
+    </div>
+
+    <div class="form-group">
+      <label>Alamat Lengkap Penerima</label>
+      <textarea id="receiverAddress" rows="3" required></textarea>
+    </div>
+
+    <button type="submit">Kirim via WhatsApp</button>
+
+  </form>
+</div>
+
+<footer>
+  © 2026 A & H Express — All Rights Reserved
+</footer>
+
+<script>
+document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let sellerName = document.getElementById("sellerName").value;
+    let sellerPhone = document.getElementById("sellerPhone").value;
+    let sellerAddress = document.getElementById("sellerAddress").value;
+    let receiverName = document.getElementById("receiverName").value;
+    let receiverPhone = document.getElementById("receiverPhone").value;
+    let receiverAddress = document.getElementById("receiverAddress").value;
+
+    let message = `📦 *FORM PENGIRIMAN A & H EXPRESS*%0A%0A
+👤 *Data Pengirim*%0A
+Nama: ${sellerName}%0A
+No HP: ${sellerPhone}%0A
+Alamat: ${sellerAddress}%0A%0A
+📍 *Data Penerima*%0A
+Nama: ${receiverName}%0A
+No HP: ${receiverPhone}%0A
+Alamat: ${receiverAddress}`;
+
+    let phoneNumber = "6285366573886"; // format tanpa 0 depan
+    let url = `https://wa.me/${phoneNumber}?text=${message}`;
+
+    window.open(url, "_blank");
+});
+</script>
+
+</body>
+</html>
