@@ -1,97 +1,217 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>A & H Express — Pengiriman Paket Cepat & Aman</title>
-  <meta name="description" content="A & H Express — layanan pengiriman paket cepat, aman, dan terpercaya. Kirim paket mudah langsung via WhatsApp." />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>A & H Express — Ekspedisi Nasional</title>
 
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-    body { background:#f4f6f9; color:#222; }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    header {
-      background: linear-gradient(135deg,#0f172a,#1e293b);
-      color:white;
-      padding:20px 0;
-      text-align:center;
-    }
-
-    header h1 {
-      font-size:28px;
-      font-weight:700;
-      letter-spacing:1px;
-    }
-
-    header p {
-      opacity:.8;
-      margin-top:5px;
-    }
-
-    .container {
-      max-width:700px;
-      margin:40px auto;
-      background:white;
-      padding:30px;
-      border-radius:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
-    }
-
-    h2 {
-      text-align:center;
-      margin-bottom:20px;
-      color:#0f172a;
-    }
-
-    .form-group {
-      margin-bottom:15px;
-    }
-
-    label {
-      font-size:14px;
-      font-weight:600;
-      display:block;
-      margin-bottom:5px;
-    }
-
-    input, textarea {
-      width:100%;
-      padding:10px;
-      border:1px solid #ddd;
-      border-radius:8px;
-      font-size:14px;
-    }
-
-    textarea { resize:none; }
-
-    button {
-      width:100%;
-      padding:12px;
-      border:none;
-      border-radius:8px;
-      background:#16a34a;
-      color:white;
-      font-size:16px;
-      font-weight:600;
-      cursor:pointer;
-      transition:.3s;
-    }
-
-    button:hover {
-      background:#15803d;
-    }
-
-    footer {
-      text-align:center;
-      padding:20px;
-      margin-top:40px;
-      font-size:14px;
-      color:#666;
-    }
-  </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:#f4f6f9;color:#222}
+header{background:linear-gradient(135deg,#0f172a,#1e293b);color:white;padding:20px;text-align:center}
+.container{max-width:800px;margin:40px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+h2{text-align:center;margin-bottom:20px}
+.form-group{margin-bottom:15px}
+label{font-weight:600;font-size:14px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:5px}
+button{width:100%;padding:12px;border:none;border-radius:8px;background:#16a34a;color:white;font-weight:600;cursor:pointer}
+button:hover{background:#15803d}
+.tracking-box{margin-top:50px;padding-top:20px;border-top:2px solid #eee}
+.result{margin-top:20px;background:#f1f5f9;padding:15px;border-radius:8px;font-size:14px}
+footer{text-align:center;margin-top:40px;padding:20px;color:#777}
+</style>
 </head>
 
+<body>
+
+<header>
+<h1>A & H Express</h1>
+<p>Semua Ekspedisi Indonesia • Tracking Real-Time</p>
+</header>
+
+<div class="container">
+
+<h2>Form Pengiriman Paket</h2>
+
+<form id="orderForm">
+
+<div class="form-group">
+<label>Nama Pengirim</label>
+<input type="text" id="sellerName" required>
+</div>
+
+<div class="form-group">
+<label>No HP Pengirim</label>
+<input type="tel" id="sellerPhone" required>
+</div>
+
+<div class="form-group">
+<label>Alamat Pengirim</label>
+<textarea id="sellerAddress" rows="2" required></textarea>
+</div>
+
+<div class="form-group">
+<label>Nama Penerima</label>
+<input type="text" id="receiverName" required>
+</div>
+
+<div class="form-group">
+<label>No HP Penerima</label>
+<input type="tel" id="receiverPhone" required>
+</div>
+
+<div class="form-group">
+<label>Alamat Penerima</label>
+<textarea id="receiverAddress" rows="2" required></textarea>
+</div>
+
+<div class="form-group">
+<label>Pilih Ekspedisi</label>
+<select id="courier" required>
+<option value="jne">JNE</option>
+<option value="jnt">J&T Express</option>
+<option value="sicepat">SiCepat</option>
+<option value="idexpress">ID Express</option>
+<option value="wahana">Wahana</option>
+<option value="anteraja">AnterAja</option>
+<option value="ninjavan">Ninja Xpress</option>
+<option value="pos-indonesia">Pos Indonesia</option>
+<option value="tiki">TIKI</option>
+<option value="lion-parcel">Lion Parcel</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Layanan</label>
+<select id="service">
+<option value="Reguler">Reguler</option>
+<option value="Express">Express</option>
+<option value="Same Day">Same Day</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>Berat (kg)</label>
+<input type="number" id="weight" step="0.1" required>
+</div>
+
+<div class="form-group">
+<label>Ongkir (Rp)</label>
+<input type="number" id="shippingCost" required>
+</div>
+
+<button type="submit">Kirim via WhatsApp</button>
+
+</form>
+
+<div class="tracking-box">
+<h2>🔎 Lacak Resi</h2>
+
+<div class="form-group">
+<label>Pilih Ekspedisi</label>
+<select id="trackCourier">
+<option value="jne">JNE</option>
+<option value="jnt">J&T Express</option>
+<option value="sicepat">SiCepat</option>
+<option value="idexpress">ID Express</option>
+<option value="wahana">Wahana</option>
+<option value="anteraja">AnterAja</option>
+<option value="ninjavan">Ninja Xpress</option>
+<option value="pos-indonesia">Pos Indonesia</option>
+<option value="tiki">TIKI</option>
+<option value="lion-parcel">Lion Parcel</option>
+</select>
+</div>
+
+<div class="form-group">
+<input type="text" id="trackingNumber" placeholder="Masukkan nomor resi">
+</div>
+
+<button onclick="trackResi()">Lacak Sekarang</button>
+
+<div class="result" id="trackingResult" style="display:none"></div>
+</div>
+
+</div>
+
+<footer>© 2026 A & H Express</footer>
+
+<script>
+
+// GENERATE RESI
+function generateResi(){
+return "ANH" + Date.now();
+}
+
+document.getElementById("orderForm").addEventListener("submit",function(e){
+e.preventDefault();
+
+let resi = generateResi();
+let courier = document.getElementById("courier").value;
+let service = document.getElementById("service").value;
+let weight = document.getElementById("weight").value;
+let cost = new Intl.NumberFormat("id-ID").format(document.getElementById("shippingCost").value);
+
+let message =
+`━━━━━━━━━━━━━━━━━━
+📦 *FORM PENGIRIMAN A & H EXPRESS*
+━━━━━━━━━━━━━━━━━━
+
+🚚 Ekspedisi : ${courier.toUpperCase()}
+⚡ Layanan : ${service}
+🧾 No Resi : ${resi}
+
+📦 DETAIL
+- Berat : ${weight} kg
+- Ongkir : Rp ${cost}
+
+━━━━━━━━━━━━━━━━━━`;
+
+let url = `https://wa.me/6282141285551?text=${encodeURIComponent(message)}`;
+window.open(url,"_blank");
+});
+
+// TRACKING REALTIME
+async function trackResi(){
+let tn = document.getElementById("trackingNumber").value;
+let slug = document.getElementById("trackCourier").value;
+let resultBox = document.getElementById("trackingResult");
+
+resultBox.style.display="block";
+resultBox.innerHTML="Memuat data...";
+
+try{
+let res = await fetch("/api/track",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({trackingNumber:tn,slug:slug})
+});
+
+let data = await res.json();
+
+if(!data.ok){
+resultBox.innerHTML="Resi tidak ditemukan / belum aktif.";
+return;
+}
+
+let html = `<b>Status:</b> ${data.tracking.title || '-'}<br><br>`;
+data.tracking.checkpoints.forEach(cp=>{
+html += `📍 ${cp.time || ''}<br>${cp.status}<br>${cp.location}<hr>`;
+});
+
+resultBox.innerHTML = html;
+
+}catch(err){
+resultBox.innerHTML="Terjadi kesalahan koneksi.";
+}
+}
+
+</script>
+
+</body>
+</html>
 <body>
 
 <header>
