@@ -11,15 +11,17 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{background:#f4f6f9;color:#222}
 header{background:linear-gradient(135deg,#0f172a,#1e293b);color:white;padding:20px;text-align:center}
-.container{max-width:800px;margin:40px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.container{max-width:850px;margin:40px auto;background:white;padding:30px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
 h2{text-align:center;margin-bottom:20px}
 .form-group{margin-bottom:15px}
 label{font-weight:600;font-size:14px}
 input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:5px}
 button{width:100%;padding:12px;border:none;border-radius:8px;background:#16a34a;color:white;font-weight:600;cursor:pointer}
 button:hover{background:#15803d}
-.tracking-box{margin-top:50px;padding-top:20px;border-top:2px solid #eee}
 .result{margin-top:20px;background:#f1f5f9;padding:15px;border-radius:8px;font-size:14px}
+.loading{color:#f59e0b;font-weight:600}
+.error{color:red;font-weight:600}
+.success{color:green;font-weight:600}
 footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 </style>
 </head>
@@ -36,36 +38,6 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 <h2>Form Pengiriman Paket</h2>
 
 <form id="orderForm">
-
-<div class="form-group">
-<label>Nama Pengirim</label>
-<input type="text" id="sellerName" required>
-</div>
-
-<div class="form-group">
-<label>No HP Pengirim</label>
-<input type="tel" id="sellerPhone" required>
-</div>
-
-<div class="form-group">
-<label>Alamat Pengirim</label>
-<textarea id="sellerAddress" rows="2" required></textarea>
-</div>
-
-<div class="form-group">
-<label>Nama Penerima</label>
-<input type="text" id="receiverName" required>
-</div>
-
-<div class="form-group">
-<label>No HP Penerima</label>
-<input type="tel" id="receiverPhone" required>
-</div>
-
-<div class="form-group">
-<label>Alamat Penerima</label>
-<textarea id="receiverAddress" rows="2" required></textarea>
-</div>
 
 <div class="form-group">
 <label>Pilih Ekspedisi</label>
@@ -86,9 +58,9 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 <div class="form-group">
 <label>Layanan</label>
 <select id="service">
-<option value="Reguler">Reguler</option>
-<option value="Express">Express</option>
-<option value="Same Day">Same Day</option>
+<option value="reg">Reguler</option>
+<option value="exp">Express</option>
+<option value="sameday">Same Day</option>
 </select>
 </div>
 
@@ -98,15 +70,16 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 </div>
 
 <div class="form-group">
-<label>Ongkir (Rp)</label>
-<input type="number" id="shippingCost" required>
+<label>Ongkir Otomatis (Rp)</label>
+<input type="text" id="shippingCost" readonly>
 </div>
 
 <button type="submit">Kirim via WhatsApp</button>
 
 </form>
 
-<div class="tracking-box">
+<hr style="margin:40px 0">
+
 <h2>🔎 Lacak Resi</h2>
 
 <div class="form-group">
@@ -132,7 +105,6 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 <button onclick="trackResi()">Lacak Sekarang</button>
 
 <div class="result" id="trackingResult" style="display:none"></div>
-</div>
 
 </div>
 
@@ -140,155 +112,111 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 
 <script>
 
-// GENERATE RESI
-function generateResi(){
-return "ANH" + Date.now();
+// ======================
+// CEK ONGKIR OTOMATIS
+// ======================
+
+function hitungOngkir(){
+let weight = parseFloat(document.getElementById("weight").value);
+let service = document.getElementById("service").value;
+
+if(!weight) return;
+
+let base = 10000; // harga per kg dasar
+
+if(service === "exp") base = 15000;
+if(service === "sameday") base = 25000;
+
+let total = Math.ceil(weight) * base;
+
+document.getElementById("shippingCost").value =
+new Intl.NumberFormat("id-ID").format(total);
 }
+
+document.getElementById("weight").addEventListener("input", hitungOngkir);
+document.getElementById("service").addEventListener("change", hitungOngkir);
+
+
+// ======================
+// KIRIM WHATSAPP
+// ======================
 
 document.getElementById("orderForm").addEventListener("submit",function(e){
 e.preventDefault();
 
-let resi = generateResi();
-let courier = document.getElementById("courier").value;
+let courier = document.getElementById("courier").value.toUpperCase();
 let service = document.getElementById("service").value;
 let weight = document.getElementById("weight").value;
-let cost = new Intl.NumberFormat("id-ID").format(document.getElementById("shippingCost").value);
+let cost = document.getElementById("shippingCost").value;
 
 let message =
-`━━━━━━━━━━━━━━━━━━
-📦 *FORM PENGIRIMAN A & H EXPRESS*
-━━━━━━━━━━━━━━━━━━
+`📦 *FORM PENGIRIMAN A & H EXPRESS*
 
-🚚 Ekspedisi : ${courier.toUpperCase()}
+🚚 Ekspedisi : ${courier}
 ⚡ Layanan : ${service}
-🧾 No Resi : ${resi}
-
-📦 DETAIL
-- Berat : ${weight} kg
-- Ongkir : Rp ${cost}
-
-━━━━━━━━━━━━━━━━━━`;
+📦 Berat : ${weight} kg
+💰 Ongkir : Rp ${cost}`;
 
 let url = `https://wa.me/6282141285551?text=${encodeURIComponent(message)}`;
 window.open(url,"_blank");
 });
 
-// TRACKING REALTIME
-async function trackResi(){
-let tn = document.getElementById("trackingNumber").value;
-let slug = document.getElementById("trackCourier").value;
-let resultBox = document.getElementById("trackingResult");
 
-resultBox.style.display="block";
-resultBox.innerHTML="Memuat data...";
+// ======================
+// TRACKING REALTIME FIX
+// ======================
+
+async function trackResi(){
+let tn = document.getElementById("trackingNumber").value.trim();
+let slug = document.getElementById("trackCourier").value;
+let box = document.getElementById("trackingResult");
+
+if(!tn){
+alert("Masukkan nomor resi terlebih dahulu");
+return;
+}
+
+box.style.display="block";
+box.innerHTML="<div class='loading'>Menghubungkan ke server...</div>";
 
 try{
+
 let res = await fetch("/api/track",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
-body:JSON.stringify({trackingNumber:tn,slug:slug})
+body:JSON.stringify({
+trackingNumber: tn,
+slug: slug
+})
 });
 
 let data = await res.json();
 
 if(!data.ok){
-resultBox.innerHTML="Resi tidak ditemukan / belum aktif.";
+box.innerHTML="<div class='error'>Resi tidak ditemukan / API belum aktif.</div>";
 return;
 }
 
-let html = `<b>Status:</b> ${data.tracking.title || '-'}<br><br>`;
+let html = `<div class='success'><b>Status:</b> ${data.tracking.title || '-'}</div><br>`;
+
 data.tracking.checkpoints.forEach(cp=>{
-html += `📍 ${cp.time || ''}<br>${cp.status}<br>${cp.location}<hr>`;
+html += `
+<div>
+<b>${cp.time || ''}</b><br>
+${cp.status}<br>
+<i>${cp.location}</i>
+<hr>
+</div>`;
 });
 
-resultBox.innerHTML = html;
+box.innerHTML = html;
 
 }catch(err){
-resultBox.innerHTML="Terjadi kesalahan koneksi.";
+box.innerHTML="<div class='error'>Gagal koneksi ke server.</div>";
 }
+
 }
 
-</script>
-
-</body>
-</html>
-<body>
-
-<header>
-  <h1>A & H Express</h1>
-  <p>Pengiriman Paket Cepat • Aman • Terpercaya</p>
-</header>
-
-<div class="container">
-  <h2>Form Pengiriman Paket</h2>
-
-  <form id="orderForm">
-
-    <div class="form-group">
-      <label>Nama Seller / Pengirim</label>
-      <input type="text" id="sellerName" required>
-    </div>
-
-    <div class="form-group">
-      <label>No. Telepon Pengirim</label>
-      <input type="tel" id="sellerPhone" required>
-    </div>
-
-    <div class="form-group">
-      <label>Alamat Rumah Pengirim</label>
-      <textarea id="sellerAddress" rows="3" required></textarea>
-    </div>
-
-    <div class="form-group">
-      <label>Nama Penerima</label>
-      <input type="text" id="receiverName" required>
-    </div>
-
-    <div class="form-group">
-      <label>No. Telepon Penerima</label>
-      <input type="tel" id="receiverPhone" required>
-    </div>
-
-    <div class="form-group">
-      <label>Alamat Lengkap Penerima</label>
-      <textarea id="receiverAddress" rows="3" required></textarea>
-    </div>
-
-    <button type="submit">Kirim via WhatsApp</button>
-
-  </form>
-</div>
-
-<footer>
-  © 2026 A & H Express — All Rights Reserved
-</footer>
-
-<script>
-document.getElementById("orderForm").addEventListener("submit", function(e){
-    e.preventDefault();
-
-    let sellerName = document.getElementById("sellerName").value;
-    let sellerPhone = document.getElementById("sellerPhone").value;
-    let sellerAddress = document.getElementById("sellerAddress").value;
-    let receiverName = document.getElementById("receiverName").value;
-    let receiverPhone = document.getElementById("receiverPhone").value;
-    let receiverAddress = document.getElementById("receiverAddress").value;
-
-    let message = `📦 *FORM PENGIRIMAN A & H EXPRESS*%0A%0A
-👤 *Data Pengirim*%0A
-Nama: ${sellerName}%0A
-No HP: ${sellerPhone}%0A
-Alamat: ${sellerAddress}%0A%0A
-📍 *Data Penerima*%0A
-Nama: ${receiverName}%0A
-No HP: ${receiverPhone}%0A
-Alamat: ${receiverAddress}`;
-
-    let phoneNumber = "6282141285551"; // format tanpa 0 depan
-    let url = `https://wa.me/${phoneNumber}?text=${message}`;
-
-    window.open(url, "_blank");
-});
 </script>
 
 </body>
