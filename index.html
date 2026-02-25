@@ -16,10 +16,9 @@ h2{margin-bottom:20px;text-align:center}
 .form-group{margin-bottom:15px}
 label{font-weight:600;font-size:14px}
 input,select,textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:5px}
-button{width:100%;padding:12px;border:none;border-radius:8px;background:#16a34a;color:white;font-weight:600;cursor:pointer}
+button{width:100%;padding:12px;border:none;border-radius:8px;background:#16a34a;color:white;font-weight:600;cursor:pointer;margin-top:10px}
 button:hover{background:#15803d}
 .section-title{margin-top:25px;font-weight:700;color:#0f172a}
-.result{margin-top:20px;background:#f1f5f9;padding:15px;border-radius:8px;font-size:14px}
 footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 </style>
 </head>
@@ -28,7 +27,7 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 
 <header>
 <h1>A & H Express</h1>
-<p>Semua Ekspedisi Indonesia • Tracking Real-Time</p>
+<p>Semua Ekspedisi Indonesia • Tracking Resmi</p>
 </header>
 
 <div class="container">
@@ -37,7 +36,7 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 
 <form id="orderForm">
 
-<div class="section-title">📦 Data Pengirim (Seller)</div>
+<div class="section-title">📦 Data Pengirim</div>
 
 <div class="form-group">
 <label>Nama Pengirim</label>
@@ -83,9 +82,9 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 <option value="wahana">Wahana</option>
 <option value="anteraja">AnterAja</option>
 <option value="ninjavan">Ninja Xpress</option>
-<option value="pos-indonesia">Pos Indonesia</option>
+<option value="pos">Pos Indonesia</option>
 <option value="tiki">TIKI</option>
-<option value="lion-parcel">Lion Parcel</option>
+<option value="lion">Lion Parcel</option>
 </select>
 </div>
 
@@ -104,10 +103,11 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 </div>
 
 <div class="form-group">
-<label>Ongkir Otomatis (Rp)</label>
+<label>Ongkir Otomatis (Estimasi)</label>
 <input type="text" id="shippingCost" readonly>
 </div>
 
+<button type="button" onclick="cekOngkirResmi()">Cek Ongkir Resmi Ekspedisi</button>
 <button type="submit">Kirim via WhatsApp</button>
 
 </form>
@@ -126,9 +126,9 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 <option value="wahana">Wahana</option>
 <option value="anteraja">AnterAja</option>
 <option value="ninjavan">Ninja Xpress</option>
-<option value="pos-indonesia">Pos Indonesia</option>
+<option value="pos">Pos Indonesia</option>
 <option value="tiki">TIKI</option>
-<option value="lion-parcel">Lion Parcel</option>
+<option value="lion">Lion Parcel</option>
 </select>
 </div>
 
@@ -138,17 +138,13 @@ footer{text-align:center;margin-top:40px;padding:20px;color:#777}
 
 <button onclick="trackResi()">Lacak Sekarang</button>
 
-<div class="result" id="trackingResult" style="display:none"></div>
-
 </div>
 
 <footer>© 2026 A & H Express</footer>
 
 <script>
 
-// ======================
-// ONGKIR OTOMATIS
-// ======================
+// ================= ONGKIR ESTIMASI =================
 function hitungOngkir(){
 let weight = parseFloat(document.getElementById("weight").value);
 let service = document.getElementById("service").value;
@@ -161,80 +157,81 @@ if(service==="sameday") base=25000;
 let total = Math.ceil(weight) * base;
 
 document.getElementById("shippingCost").value =
-new Intl.NumberFormat("id-ID").format(total);
+"Rp " + new Intl.NumberFormat("id-ID").format(total);
 }
 document.getElementById("weight").addEventListener("input",hitungOngkir);
 document.getElementById("service").addEventListener("change",hitungOngkir);
 
-// ======================
-// KIRIM WHATSAPP
-// ======================
+// ================= WHATSAPP =================
 document.getElementById("orderForm").addEventListener("submit",function(e){
 e.preventDefault();
 
 let message =
-`📦 *FORM PENGIRIMAN A & H EXPRESS*
+`📦 FORM PENGIRIMAN A & H EXPRESS
 
-👤 *DATA PENGIRIM*
-- Nama: ${sellerName.value}
-- HP: ${sellerPhone.value}
-- Alamat: ${sellerAddress.value}
+Nama Pengirim: ${sellerName.value}
+HP: ${sellerPhone.value}
+Alamat: ${sellerAddress.value}
 
-📍 *DATA PENERIMA*
-- Nama: ${receiverName.value}
-- HP: ${receiverPhone.value}
-- Alamat: ${receiverAddress.value}
+Nama Penerima: ${receiverName.value}
+HP: ${receiverPhone.value}
+Alamat: ${receiverAddress.value}
 
-🚚 Ekspedisi: ${courier.value.toUpperCase()}
-⚡ Layanan: ${service.value}
-📦 Berat: ${weight.value} kg
-💰 Ongkir: Rp ${shippingCost.value}`;
+Ekspedisi: ${courier.value.toUpperCase()}
+Layanan: ${service.value}
+Berat: ${weight.value} kg
+Ongkir: ${shippingCost.value}`;
 
 let url = `https://wa.me/6282141285551?text=${encodeURIComponent(message)}`;
 window.open(url,"_blank");
 });
 
-// ======================
-// TRACKING
-// ======================
-async function trackResi(){
-let tn = trackingNumber.value.trim();
-let slug = trackCourier.value;
-let box = document.getElementById("trackingResult");
+// ================= CEK ONGKIR RESMI =================
+function cekOngkirResmi(){
+let courier = document.getElementById("courier").value;
+let url="";
+
+switch(courier){
+case "jne": url="https://www.jne.co.id/id/beranda/tarif"; break;
+case "jnt": url="https://jet.co.id/rates"; break;
+case "sicepat": url="https://www.sicepat.com/deliveryFee"; break;
+case "pos": url="https://www.posindonesia.co.id/id/tarif"; break;
+case "lion": url="https://lionparcel.com/tarif"; break;
+case "tiki": url="https://www.tiki.id/id/tarif"; break;
+case "anteraja": url="https://anteraja.id/shipping"; break;
+case "ninjavan": url="https://www.ninjaxpress.co/id-id/shipping-rates"; break;
+case "idexpress": url="https://idexpress.com/shipping-cost"; break;
+case "wahana": url="https://wahana.com/tarif"; break;
+}
+window.open(url,"_blank");
+}
+
+// ================= TRACKING RESMI =================
+function trackResi(){
+let tn = document.getElementById("trackingNumber").value.trim();
+let courier = document.getElementById("trackCourier").value;
 
 if(!tn){
 alert("Masukkan nomor resi");
 return;
 }
 
-box.style.display="block";
-box.innerHTML="Menghubungkan ke server...";
+let url="";
 
-try{
-let res = await fetch("/api/track",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({trackingNumber:tn,slug:slug})
-});
-
-let data = await res.json();
-
-if(!data.ok){
-box.innerHTML="Resi tidak ditemukan / API belum aktif.";
-return;
+switch(courier){
+case "jne": url="https://www.jne.co.id/id/tracking/trace?awb="+tn; break;
+case "jnt": url="https://jet.co.id/track?awb="+tn; break;
+case "sicepat": url="https://www.sicepat.com/checkAwb?awb="+tn; break;
+case "pos": url="https://www.posindonesia.co.id/id/tracking?resi="+tn; break;
+case "lion": url="https://lionparcel.com/track?awb="+tn; break;
+case "tiki": url="https://www.tiki.id/id/tracking?awb="+tn; break;
+case "anteraja": url="https://anteraja.id/tracking?awb="+tn; break;
+case "ninjavan": url="https://www.ninjaxpress.co/id-id/tracking?awb="+tn; break;
+case "idexpress": url="https://idexpress.com/tracking?awb="+tn; break;
+case "wahana": url="https://wahana.com/tracking?awb="+tn; break;
 }
 
-let html = `<b>Status:</b> ${data.tracking.title || '-'}<br><br>`;
-
-data.tracking.checkpoints.forEach(cp=>{
-html += `<b>${cp.time||''}</b><br>${cp.status}<br><i>${cp.location}</i><hr>`;
-});
-
-box.innerHTML=html;
-
-}catch(err){
-box.innerHTML="Gagal koneksi ke server.";
-}
+window.open(url,"_blank");
 }
 
 </script>
